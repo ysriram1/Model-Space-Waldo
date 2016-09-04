@@ -49,15 +49,16 @@ for fileName in os.listdir('./data'):
     
 dfAllData = dataAddDf.fillna(0)
 ######Performing PCA or MDS on the entire data
+# PCA
 from sklearn.decomposition import PCA
 pca = PCA(n_components=2)
 redPCAMatrix = pca.fit_transform(dfAllData)
 redMat = redPCAMatrix
 
-from sklearn.manifold import MDS
-mds = MDS(n_components = 2)
-redMDSMatrix = mds.fit_transform(dfAllData)
-redMat = redMDSMatrix
+
+# MDS
+## MDS is not happening on the full data, we perform is instead on the reduced data. 
+
 
 # subset this matrix to only include the users we are interested in
 # Step 1: look for users that either fast or slow
@@ -70,10 +71,12 @@ for rowIndex in infoDataDf.index:
         if rowIndex not in fastUsrOrdLst: fastUsrOrdLst.append(rowIndex)
     if row == 0:
         if rowIndex not in slowUsrOrdLst: slowUsrOrdLst.append(rowIndex)
+            
+allFastAndSlowUserLst = fastUsrOrdLst + slowUsrOrdLst
 
 
 # Step 2: extract out only fast and slow users
-allFastAndSlowUserLst = fastUsrOrdLst + slowUsrOrdLst
+
 userTimeDict = {}
 start = 0; end = 90 # every time file had 90 users
 for timeName in timeOrdList:    
@@ -83,6 +86,52 @@ for timeName in timeOrdList:
             userTimeDict[userID] = {}
         userTimeDict[userID][int(timeName[:-1])] = subArray[userIndex]
     start = end; end = start + 90
+
+
+# Optional: Performing MDS (run this code bit only if MDS (AND NOT PCA) is needed)
+## Subset Data
+dfAllData['order'] = range(dfAllData.shape[0]) 
+dfRedData = dfAllData.ix[allFastAndSlowUserLst]
+currentUserOrder = dfRedData.index
+dfRedData['userOrder'] = currentUserOrder  
+dfRedData.index = dfRedData['order']
+dfRedData.sort_index(inplace=True) #we need the new red df to be in the same order as the original one
+dfRedData.index = range(dfRedData.shape[0]) 
+
+
+currentUserOrder = dfRedData['userOrder'][:len(allFastAndSlowUserLst)]
+currentUserOrder = list(currentUserOrder)
+del dfRedData['order']; del dfRedData['userOrder']
+
+from sklearn.manifold import MDS
+
+mds = MDS(n_components = 2, random_state=99, dissimilarity='euclidean')
+redMDSMatrix = mds.fit_transform(dfRedData)
+redMat = redMDSMatrix
+
+## Create the data dictionary
+userTimeDict = {}
+start = 0; end = 24 # every time file had 24 users
+for timeName in timeOrdList:    
+    subArray = redMat[start:end]
+    for userID, userIndex  in enumerate(allFastAndSlowUserLst):
+        lstIndex = currentUserOrder.index(userIndex)
+        if userID not in userTimeDict.keys():
+            userTimeDict[userID] = {}
+        userTimeDict[userID][int(timeName[:-1])] = subArray[lstIndex]
+    start = end; end = start + 24
+
+
+
+
+
+
+
+
+
+
+
+
 
 # plot the sequence for each user
 # PCA:
