@@ -11,8 +11,8 @@ import os
 import pandas as pd
 import pickle
 
-os.chdir('C:/Users/SYARLAG1/Desktop/Model-Space-Waldo')
-
+#os.chdir('C:/Users/SYARLAG1/Desktop/Model-Space-Waldo')
+os.chdir('/Users/Sriram/Desktop/DePaul/Model-Space-Waldo')
 
 
 # attributes of the last file have all the columns we need
@@ -122,7 +122,24 @@ for timeIndex, timeChunk in enumerate(lstIndices):
         continue
     dfRedDataSub = pd.concat([dfRedDataSub,dfRedData.iloc[timeChunk,:]])
     count += 1
-    
+
+##OPTIONAL! RUN THIS INPLACE OF PREVIOUS LOOP> We now remove 156/166 and keep on 10 timestamps (this is optional - done to reduce clutter in plots):
+dfRedDataSub = pd.DataFrame()
+lstIndices = [[x+y for y in range(24)] for x in range(0,dfRedData.shape[0],24)]  # we have 24 users
+timeIndicesToRm = []
+count = 0
+for timeIndex, timeChunk in enumerate(lstIndices):
+    if count in [1,2,3,4,5,6,7,8,9]: #skip all indices expect for 0
+        print count
+        if count == 9: 
+            count = 0
+            timeIndicesToRm.append(timeIndex)
+            continue
+        timeIndicesToRm.append(timeIndex)
+        count += 1        
+        continue
+    dfRedDataSub = pd.concat([dfRedDataSub,dfRedData.iloc[timeChunk,:]])
+    count += 1
 
 
 #################
@@ -164,6 +181,12 @@ for timeIndex, timeName in enumerate(timeOrdList):
 pFile = open('./waldoDataDict.pickle', 'w')
 pickle.dump(userTimeDict, pFile)
 pFile.close()
+
+#Only 10 points per user
+pFile = open('./waldoDataDict10.pickle', 'w')
+pickle.dump(userTimeDict, pFile)
+pFile.close()
+
 
 # plot the sequence for each user
 # PCA:
