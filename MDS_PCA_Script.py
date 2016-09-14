@@ -11,8 +11,8 @@ import os
 import pandas as pd
 import pickle
 
-#os.chdir('C:/Users/SYARLAG1/Desktop/Model-Space-Waldo')
-os.chdir('/Users/Sriram/Desktop/DePaul/Model-Space-Waldo')
+os.chdir('C:/Users/SYARLAG1/Desktop/Model-Space-Waldo')
+#os.chdir('/Users/Sriram/Desktop/DePaul/Model-Space-Waldo')
 
 
 # attributes of the last file have all the columns we need
@@ -77,7 +77,7 @@ for rowIndex in infoDataDf.index:
 allFastAndSlowUserLst = fastUsrOrdLst + slowUsrOrdLst
 
 
-# Step 2: extract out only fast and slow users
+# Step 2: extract out only fast and slow users # SKIP This if doing MDS
 
 userTimeDict = {}
 start = 0; end = 90 # every time file had 90 users
