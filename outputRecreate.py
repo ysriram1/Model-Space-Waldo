@@ -8,10 +8,10 @@ Created on Mon Aug  8 00:38:27 2016
 ####this script recreates the aggregate functions output using our data
 
 def fillDFs(userData):
-    startTuple = [(0, userData.values()[0], 'Starting... <br />')]
+    startTuple = [(0, list(userData.values()[0]), 'Starting... <br />')]
     remainingTuples = []
     for i, points in enumerate(userData.values()[1:]):
-        remainingTuples.append(((i+1)*5,points))
+        remainingTuples.append(((i+1)*5,list(points)))
     return startTuple + remainingTuples
     
 

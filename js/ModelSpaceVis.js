@@ -81,7 +81,8 @@ function drawVis(userdata, anchorname, W, H, OPTS) {
 
     if(OPTS.groupChecked){//Sriram: if group is checked color selection process:
     
-    var fClrsUsers = d3.scale.category20b();
+
+    var fClrsUsers = {d3.scale.category20b()};
     dClrsUsers = mapColors(dotdata, fClrsUsers);
      for (var key in dUserGroup){
       var userNumber = ".u"+key;
@@ -199,8 +200,8 @@ function drawVis(userdata, anchorname, W, H, OPTS) {
        .data(dotdata)
        .enter().append("circle")
        .attr("class", function(d){str = d.info;
-                                    DFNo = str.slice(17,19);
-                                    return "dot user" + d.user +" DF"+ DFNo;
+                                    //DFNo = str.slice(17,19);
+                                    return "dot user" + d.user;// +" DF"+ DFNo;
                                     
                             //      return "dot user" + d.user;
                                  })
@@ -219,11 +220,11 @@ function drawVis(userdata, anchorname, W, H, OPTS) {
           if(OPTS.groupChecked){return dClrsUsers[dUserGroup[d.user]];}} 
       })  
        .on("click", function(d) { updateInfoBox(d.info);
-                                  newDfInfo = d.info.slice(24,9999999) //Sriram: Adding this to ignore "Top key words"
+                                  //newDfInfo = d.info.slice(24,9999999) //Sriram: Adding this to ignore "Top key words"
                                   updateSharedTokens(newDfInfo, 'dot'); 
                                   str = d.info; console.log(str);
-                                  tempDFNo = str.slice(17,19);
-                                  tempName = ".dot.user" + d.user+".df"+tempDFNo; console.log(tempName); //creating temp identifier
+                                  //tempDFNo = str.slice(17,19);
+                                  tempName = ".dot.user" + d.user;//+".df"+tempDFNo; console.log(tempName); //creating temp identifier
                                   svg.selectAll(tempName)
                                       //.attr('r',12)
                                       //.style("fill", "transparent")       
